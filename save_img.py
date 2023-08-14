@@ -39,6 +39,21 @@ def download_image(url, filename, folder='images/'):
     return path_to_img
 
 
+def parse_book_page(page_html):
+    soup = BeautifulSoup(page_html, "lxml")
+    title_text = soup.find('div', {'id': 'content'}).find('h1').text
+    short_book_img =  soup.find('div', class_='bookimage').find('img')['src']
+
+    reference_book = {
+        'full_url_img': urljoin(url_for_title, short_book_img),
+        'book_name': title_text.split(':')[0].strip(),
+        'book_author': title_text.split(':')[-1].strip(),
+        'comments': [comment.find('span').text for comment in soup.find_all('div', class_='texts')],
+        'book_genres': [genre.text for genre in soup.find('span', class_='d_book').find_all('a')],
+    }
+
+    return reference_book
+    
     
 
 if __name__ == '__main__':
@@ -56,25 +71,8 @@ if __name__ == '__main__':
 
         try:
             check_for_redirect(response)
-            soup = BeautifulSoup(response.text, "lxml")
-            title_text = soup.find('div', {'id': 'content'}).find('h1').text
-            short_book_img = soup.find('div', class_='bookimage').find('img')['src']
-            full_url_img = urljoin(url_for_title, short_book_img)
-            book_name = title_text.split(':')[0].strip()
-            comments = soup.find_all('div', class_='texts')
-            book_genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
+            print(parse_book_page(response.text))
 
-            print(book_name, end='\n')
-            print(book_genres, end="\n\n")
-
-            # for comment in comments:
-            #     comment = comment.find('span').text
-            #     print(comment)
-
-            
-        
-            # print(download_image(full_url_img, short_book_img))
-            # print(download_txt(download_url, f'{book_id}.{book_name}'))
         except HTTPError as ex:
             print("На данной странице нет книги.", end="\n\n")
 
