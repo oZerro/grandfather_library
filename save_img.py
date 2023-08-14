@@ -1,5 +1,6 @@
 import requests
 import os
+import argparse
 from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 from pathlib import Path
@@ -59,10 +60,17 @@ def parse_book_page(page_html):
 if __name__ == '__main__':
     Path("books").mkdir(parents=True, exist_ok=True)
     Path("images").mkdir(parents=True, exist_ok=True)
-    num_book = 10
 
+    parser = argparse.ArgumentParser(description='Помогает скачивать книги')
+    parser.add_argument('--start_id', help="Id начальной книги для скачивания", default=1)
+    parser.add_argument('--end_id', help='Id финальной книги для скачивания', default=10)
+    args = parser.parse_args()
 
-    for book_id in range(1, num_book+1):
+    start_id = int(args.start_id)
+    end_id = int(args.end_id)
+    book_id = start_id
+
+    while book_id <= end_id:
         url_for_title = f"https://tululu.org/b{book_id}/"
         download_url = f"https://tululu.org/txt.php?id={book_id}"
 
@@ -71,9 +79,10 @@ if __name__ == '__main__':
 
         try:
             check_for_redirect(response)
-            print(parse_book_page(response.text))
+            print(parse_book_page(response.text), end="\n\n")
 
         except HTTPError as ex:
             print("На данной странице нет книги.", end="\n\n")
+        book_id += 1
 
     
