@@ -62,13 +62,16 @@ if __name__ == '__main__':
             full_url_img = urljoin(url_for_title, short_book_img)
             book_name = title_text.split(':')[0].strip()
             comments = soup.find_all('div', class_='texts')
-            print(book_name, end="\n\n")
+            book_genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
 
-            for comment in comments:
-                comment = comment.find('span').text
-                print(comment)
+            print(book_name, end='\n')
+            print(book_genres, end="\n\n")
 
-            print()
+            # for comment in comments:
+            #     comment = comment.find('span').text
+            #     print(comment)
+
+            
         
             # print(download_image(full_url_img, short_book_img))
             # print(download_txt(download_url, f'{book_id}.{book_name}'))
