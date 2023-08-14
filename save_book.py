@@ -43,10 +43,11 @@ def download_image(url, filename, folder='images/'):
 def parse_book_page(page_html):
     soup = BeautifulSoup(page_html, "lxml")
     title_text = soup.find('div', {'id': 'content'}).find('h1').text
-    short_book_img =  soup.find('div', class_='bookimage').find('img')['src']
+    short_img_url = soup.find('div', class_='bookimage').find('img')['src']
 
     reference_book = {
-        'full_url_img': urljoin(url_for_title, short_book_img),
+        'short_img_url': short_img_url,
+        'full_img_url': urljoin(url_for_title, short_img_url),
         'book_name': title_text.split(':')[0].strip(),
         'book_author': title_text.split(':')[-1].strip(),
         'comments': [comment.find('span').text for comment in soup.find_all('div', class_='texts')],
@@ -79,8 +80,9 @@ if __name__ == '__main__':
 
         try:
             check_for_redirect(response)
-            print(parse_book_page(response.text), end="\n\n")
-
+            reference_book = parse_book_page(response.text)
+            download_txt(download_url, f'{book_id}.{reference_book["book_name"]}')
+            download_image(reference_book['full_img_url'], reference_book['short_img_url'])
         except HTTPError as ex:
             print("На данной странице нет книги.", end="\n\n")
         book_id += 1
