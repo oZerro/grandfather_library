@@ -32,12 +32,14 @@ def download_txt(url, filename, folder='books/'):
 def download_image(url, filename, folder='images/'):
     response = requests.get(url)
     response.raise_for_status()
-
-    filename = filename.split('/')[-1]
-    path_to_img = os.path.join(folder, filename)
-    with open(f'{folder}{filename}', 'wb') as file:
-        file.write(response.content)
-    return path_to_img
+    try:
+        filename = filename.split('/')[-1]
+        path_to_img = os.path.join(folder, filename)
+        with open(f'{folder}{filename}', 'wb') as file:
+            file.write(response.content)
+        return path_to_img
+    except HTTPError as ex:
+        print("Тут нет картинок")
 
 
 def parse_book_page(page_html):
