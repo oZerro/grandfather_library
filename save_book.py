@@ -65,12 +65,20 @@ if __name__ == '__main__':
     Path("images").mkdir(parents=True, exist_ok=True)
 
     parser = argparse.ArgumentParser(description='Помогает скачивать книги')
-    parser.add_argument('--start_id', help="Id начальной книги для скачивания", default=1)
-    parser.add_argument('--end_id', help='Id финальной книги для скачивания', default=10)
+    parser.add_argument(
+        '--start_id',
+        help="Id начальной книги для скачивания", 
+        default=1,
+        type=int)
+    parser.add_argument(
+        '--end_id', 
+        help='Id финальной книги для скачивания', 
+        default=10,
+        type=int)
     args = parser.parse_args()
 
-    start_id = int(args.start_id)
-    end_id = int(args.end_id)
+    start_id = args.start_id
+    end_id = args.end_id
     book_id = start_id
 
     while book_id <= end_id:
