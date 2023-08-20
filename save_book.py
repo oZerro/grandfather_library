@@ -1,6 +1,7 @@
 import requests
 import os
 import argparse
+import time
 from requests.exceptions import HTTPError, ConnectionError
 from bs4 import BeautifulSoup
 from pathlib import Path
@@ -98,6 +99,7 @@ if __name__ == '__main__':
             print("На данной странице нет книги.", end="\n\n")
         except ConnectionError as ex:
             print(ex)
+            time.sleep(5)
         book_id += 1
 
     
