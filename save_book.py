@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 
 
 def check_for_redirect(response):
-    if response.history:
+    if response.history: 
         raise HTTPError
 
 
@@ -43,16 +43,17 @@ def download_image(url, filename, folder='images/'):
 
 def parse_book_page(page_html, url_for_title):
     soup = BeautifulSoup(page_html, "lxml")
-    title_text = soup.find('div', {'id': 'content'}).find('h1').text
-    short_img_url = soup.find('div', class_='bookimage').find('img')['src']
+    title_text = soup.select_one('#content h1').get_text()
+    short_img_url = soup.select_one('.bookimage img')['src']
+    print("short_img_url", short_img_url)
 
     reference_book = {
         'short_img_url': short_img_url,
         'full_img_url': urljoin(url_for_title, short_img_url),
-        'book_name': title_text.split(':')[0].strip(),
-        'book_author': title_text.split(':')[-1].strip(),
-        'comments': [comment.find('span').text for comment in soup.find_all('div', class_='texts')],
-        'book_genres': [genre.text for genre in soup.find('span', class_='d_book').find_all('a')],
+        'book_name': title_text.split(":")[0].strip(),
+        'book_author': title_text.split(":")[-1].strip(),
+        'comments': [comment.text for comment in soup.select('div.texts span')],
+        'book_genres': [genre.text for genre in soup.select('.d_book a')],
     }
 
     return reference_book
